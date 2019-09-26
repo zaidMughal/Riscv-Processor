@@ -1,0 +1,25 @@
+module ALU(
+				input [31:0]a,b,
+				input [3:0]ALUSel'
+				output [31:0]result
+				);
+always@(a,b,ALUSel)
+begin
+case(ALUSel)
+4'b0000:result = a + b;
+4'b0001:result = a & b;
+4'b0010:result = a | b;
+4'b0011:result = a ^ b;
+4'b0100:result = a >> b[4:0];
+4'b0101:result = a >>> b[4:0];//--------------------------------_&_&_&_&_&_&_
+4'b0110:result = a << b[4:0];
+4'b0111:result = {31'b0,(a<b)};
+4'b1000:result = a / b;
+4'b1001:result = a % b;
+4'b1010:result = 32{a * b}; 
+4'b1011:result = {a * b};
+4'b1100:result = a - b;
+4'b1101:result = b;
+4'b1110:result = b;
+4'b1111:result = b;
+end

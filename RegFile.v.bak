@@ -1,0 +1,81 @@
+module registmem(
+						input [4:0]rd,r1,r2,
+						input [31:0]dataIn,
+						input RegWEn,clk,AReset,
+						output [31:0]data1,data2
+						);
+parameter p=32;
+
+wire [31:0]regout[31:0];
+wire [31:0]wreg_temp,wreg;
+decoder dec(rd,RegWEn,wreg_temp);
+assign wreg = {wreg_temp[31:1],1'b0};
+
+genvar i;
+generate for(i = 0; i < p; i = i + 1)begin:regfile
+			register r(dataIn,clk,AReset,wreg[i],regout[i]);
+end
+endgenerate
+
+assign data1 = regout[r1];
+assign data2 = regout[r2];
+endmodule
+
+/*module D2MUX(
+				input [Bits-1:0]data[2**selLines-1:0],
+				input [selLines-1:0]sel,
+				output [Bits-1:0]dataout
+				);
+parameter selLines=5;
+parameter Bits=32;
+assign dataout = data[sel]*/
+module decoder(
+					input [4:0]dec_in,
+					input enable,
+					output [31:0]dec_out
+					);
+assign dec_out = enable?(1<<dec_in):32'h0;
+endmodule
+
+module register(
+					input [31:0]data,
+					input clock_signal,reset,we,
+					output reg [31:0]register_variable
+					);
+initial register_variable = 0;
+always @ (negedge reset or posedge clock_signal)
+begin
+	// Reset whenever the reset signal goes low, regardless of the clock
+	if (!reset)
+		begin
+			register_variable <= 32'b0;
+		end
+	else if(we)
+		begin
+			register_variable <= data;
+		end
+end
+endmodule
+
+
+
+module tb();
+reg [4:0]rd,r1,r2;
+reg [31:0]dataIn;
+reg RegWEn,clk,AReset;
+wire [31:0]data1,data2;
+registmem f (rd,r1,r2,dataIn,RegWEn,clk,AReset,data1,data2);
+
+initial
+begin
+clk=0;
+r1=0;
+r2=6;
+#100;
+rd=0;RegWEn=1;dataIn=32'hAAAAAAA;
+#100;
+clk=1;
+#100;
+
+end
+endmodule
