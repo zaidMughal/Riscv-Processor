@@ -1,13 +1,19 @@
-module controlUnit(input [31:0]instruction,input BrLT,BrEq,
-						output RegWEn,Bsel,Asel,MemRW,output [2:0]ImmSel,PCSel,output [3:0]ALUSel,output [1:0]WBSel
+module controlUnit(
+						input [31:0]instruction,
+						input BrLT,BrEq,
+						output RegWEn,Bsel,Asel,MemRW,
+						output [2:0]ImmSel,PCSel,
+						output [3:0]ALUSel,
+						output [1:0]WBSel
 						);
 
 wire [4:0]opCode;
 wire [2:0]funct3;
-wire funct7_1;
+wire funct7_1,funct7_0;
 assign opCode = instruction[6:2];
 assign funct3 = instruction[14:12];
 assign funct7_1 = instruction[30];
+assign funct7_0 = instruction[25];
 
 parameter R=5'b01100,I=5'b00100,Ild=5'b00000,Ijlr=5'b11001,S=5'b01000,SB=5'b11000,U=5'b01101,UJ=5'b11011;
 
@@ -18,7 +24,7 @@ R:
 begin
 	PCSel=3'b0; RegWEn=1; Bsel=0; Asel=0; MemRW=0; ImmSel=3'b000; WBSel=2'b1;
 		case(funct3)
-		3'b000:ALUSel=funct7_1?4'b1100:4'b0000;//add,sub
+		3'b000:ALUSel=funct7_0 ? 4'b1011: (funct7_1?4'b1100:4'b0000);//add,sub,mul
 		3'b001:ALUSel=4'b0110;						//sll
 		3'b101:ALUSel=funct7_1?4'b0101:4'b0100;//srl,ara
 		3'b010:ALUSel=4'b0111;						//slt
@@ -72,7 +78,7 @@ begin
 		ALUSel=4'b1000;//add0, For lui,imm+0
 end
 UJ:
-begin
+begin//jal
 	PCSel=3'b1; RegWEn=1; Bsel=1;  Asel=1; MemRW=0;   ImmSel=3'b011;    WBSel=2'b10;
 		ALUSel=4'b0000;//add
 end
