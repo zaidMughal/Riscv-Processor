@@ -1,1 +1,0 @@
-module controlUnit(input [31:0]instruction,input BrLT,BrEq,output )
