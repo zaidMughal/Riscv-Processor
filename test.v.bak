@@ -1,7 +1,0 @@
-module test(input clk,input [31:0]d1,d2,output [31:0]q);
-wire [31:0]d3,d4,r;
-register(d1,clk,1'b1,1'b1,d3);
-register(d2,clk,1'b1,1'b1,d4);
-assign r = d3+d4;
-register (r,clk,1'b1,1'b1,q);
-endmodule 
