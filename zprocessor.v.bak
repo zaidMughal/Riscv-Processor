@@ -1,0 +1,23 @@
+
+
+module register(
+					input [31:0]data,
+					input clock_signal,reset,we,
+					output reg [31:0]register_variable
+					);
+always @ (negedge <reset> or posedge <clock_signal>)
+begin
+	// Reset whenever the reset signal goes low, regardless of the clock
+	if (!<reset>)
+		begin
+			<register_variable> <= 1'b0;
+		end
+	else if(we)
+		begin
+			<register_variable> <= <data>;
+		end
+	else
+		begin
+			<register_variable> <= <register_variable>;
+		end
+end
