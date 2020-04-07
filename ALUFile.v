@@ -3,8 +3,6 @@ module ALU(
 				input [3:0]ALUSel,
 				output [31:0]result
 				);
-//wire [31:0] r;
-//multip mmm(a,b,r);
 always@(*)
 begin
 case(ALUSel/*4*/)
